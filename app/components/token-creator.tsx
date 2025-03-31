@@ -85,7 +85,7 @@ function TokenCreator() {
 
   return (
     <div>
-      <h2 className="text-white">Create a New SPL Token</h2>
+      <h2 className="text-white">Create a New Token for your AI agent</h2>
       <form onSubmit={handleCreateToken}>
         <div>
           <label className="text-white">

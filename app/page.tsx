@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@crossmint/client-sdk-react-ui";
 import {
   Music,
@@ -12,21 +14,20 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function CampaignPage() {
   const { login, logout, user } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (user != null) {
-      router.push('/terms');
-    }
-  }, [user, router]);
+  // useEffect(() => {
+  //   if (user != null) {
+  //     router.push("/terms");
+  //   }
+  // }, [user, router]);
 
   const User = () => {
-
     if (!user) {
       return <div>Loading user...</div>;
     }
@@ -90,7 +91,26 @@ export default function CampaignPage() {
           <p className="mb-4 text-xl text-white">
             Support your favorite artists and earn tokens for exclusive rewards
           </p>
-          <Link
+          <div className="flex flex-col items-center justify-center mt-2">
+            <div className="w-64">
+              <Input
+                placeholder="example@example.com"
+                className="text-white mb-2"
+                // value={prompt}
+                // onChange={(e) => setPrompt(e.target.value)}
+              />
+              <Button
+                // onClick={() => handleGenerate(activeData)}
+                // disabled={!prompt || isGenerating}
+                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-black"
+                size="lg"
+              >
+                Join the waitlist
+              </Button>
+            </div>
+          </div>
+          {/* Activate the below link after the release */}
+          {/* <Link
             href="/artist"
             className="inline-flex items-center text-white hover:text-white/75 transition-colors gap-1.5"
           >
@@ -99,7 +119,7 @@ export default function CampaignPage() {
               for me
             </span>
             <ExternalLink className="h-4 w-4" />
-          </Link>
+          </Link> */}
         </div>
       </section>
 
