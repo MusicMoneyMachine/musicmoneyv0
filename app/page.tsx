@@ -3,23 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@crossmint/client-sdk-react-ui";
-import {
-  Music,
-  Ticket,
-  Wallet,
-  Share2,
-  Radio,
-  ExternalLink,
-} from "lucide-react";
-import Link from "next/link";
+import { Music, Ticket, Wallet, Share2, Radio } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { supabase } from "@/lib/supabase";
+
+const formSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+});
 
 export default function CampaignPage() {
   const { login, logout, user } = useAuth();
-  const router = useRouter();
+  // const router = useRouter();
 
   // useEffect(() => {
   //   if (user != null) {
@@ -75,6 +74,31 @@ export default function CampaignPage() {
     );
   };
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const {
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(formSchema),
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("Form submitted with:", values);
+    // ここにAPIリクエストなどの処理を追加
+    const { error } = await supabase
+      .from("users")
+      .upsert({ email: values.email });
+
+    if (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div
       className="min-h-full bg-cover bg-center"
@@ -93,20 +117,35 @@ export default function CampaignPage() {
           </p>
           <div className="flex flex-col items-center justify-center mt-2">
             <div className="w-64">
-              <Input
-                placeholder="example@example.com"
-                className="text-white mb-2"
-                // value={prompt}
-                // onChange={(e) => setPrompt(e.target.value)}
-              />
-              <Button
-                // onClick={() => handleGenerate(activeData)}
-                // disabled={!prompt || isGenerating}
-                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-black"
-                size="lg"
-              >
-                Join the waitlist
-              </Button>
+              {/* form */}
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-2"
+                >
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Input
+                          {...field}
+                          placeholder="example@example.com"
+                          className="text-white"
+                        />
+                        <FormMessage>{errors.email?.message}</FormMessage>
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-primary-500 to-primary-600"
+                    size="lg"
+                  >
+                    Join the waitlist
+                  </Button>
+                </form>
+              </Form>
             </div>
           </div>
           {/* Activate the below link after the release */}
